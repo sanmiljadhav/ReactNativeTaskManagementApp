@@ -2,6 +2,13 @@
 
 RoleTasker is a mobile application that uses React Native (with TypeScript) for the frontend and an Express.js backend. The application allows users to manage and track tasks with three distinct roles: Assignor, Worker, and Admin.
 
+# Output
+
+
+https://github.com/user-attachments/assets/2718beef-b488-45b5-ac0a-d65b6faf87f4
+
+
+
 ## Tech Stack
 Frontend: React Native, TypeScript
 Backend: Express.js
