@@ -66,7 +66,7 @@ const AdminScreen = () => {
             {item.assigned_to_workers.map((worker) => {
               
               return (
-                <View key={worker._id} style={styles.workerCard}>
+                <View key={worker._id} style={worker.status == "Done" ? styles.workerCardWithDoneStatus : styles.workerCard}>
                   <View style={styles.workerInfo}>
                     <Text style={styles.workerStatus}>
                       Status:{" "}
@@ -195,6 +195,19 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 8,
     elevation: 3,
+    
+  },
+  workerCardWithDoneStatus:{
+    backgroundColor: "#ecf0f1",
+    padding: 15,
+    marginTop: 12,
+    borderRadius: 8,
+    shadowColor: "#2C3E50",
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 3,
+    borderWidth: 4,
+    borderColor: "green"
   },
   workerInfo: {
     marginBottom: 10,
