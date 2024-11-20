@@ -1,9 +1,10 @@
-const jwt = require('jsonwebtoken'); 
+const jwt = require('jsonwebtoken');
+require('dotenv').config();
 
 
 const AuthHelper = module.exports;
 
-const SECRET_KEY = 'sammie'
+const SECRET_KEY = process.env.SECRET_KEY;
 
 AuthHelper.createJWTToken = (payload) => {
     try {
