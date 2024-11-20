@@ -115,12 +115,12 @@ WorkerController.acknowledgeAndUpdateTask = async (req, res) => {
     }
 
     // If the task is already acknowledged, no need to acknowledge again
-    if (workerAssignment.acknowledgedByWorker) {
-      return res.status(400).json({
-        success: false,
-        message: "Task already acknowledged by this worker",
-      });
-    }
+    // if (workerAssignment.acknowledgedByWorker) {
+    //   return res.status(400).json({
+    //     success: false,
+    //     message: "Task already acknowledged by this worker",
+    //   });
+    // }
 
     // Acknowledge the task by the worker
     workerAssignment.acknowledgedByWorker = true;

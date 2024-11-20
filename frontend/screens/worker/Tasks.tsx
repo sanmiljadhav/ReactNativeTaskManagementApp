@@ -21,7 +21,6 @@ import StorageUtils from "../../utils/storage_utils";
 import { fetchAssignedTasksQuery } from "../../api/apiQueries";
 import { useAcknowledgeTaskMutation } from "../../api/apiMutations";
 
-
 const WorkerAssignedTask: React.FC = () => {
   const [isComponentMounted, setIsComponentMounted] = useState<boolean>(false);
   const [isModalVisible, setIsModalVisible] = useState<boolean>(false); // Modal visibility state
@@ -32,8 +31,8 @@ const WorkerAssignedTask: React.FC = () => {
   const navigation = useNavigation();
 
   // Query to fetch tasks assigned to the logged-in worker
-  const { data, isLoading, isError, error } = fetchAssignedTasksQuery(isComponentMounted);
- 
+  const { data, isLoading, isError, error } =
+    fetchAssignedTasksQuery(isComponentMounted);
 
   // Fetch user profile on mount
   const fetchUserProfile = async () => {
@@ -58,8 +57,30 @@ const WorkerAssignedTask: React.FC = () => {
   // Use the custom mutation hook
   const acknowledgeTaskMutation = useAcknowledgeTaskMutation();
 
+  const handleEdit = (taskId: string, workerObject: any) => {
+   
+    setIsModalVisible(true);
+    setSelectedTaskId(taskId);
 
-    
+    // Find the task with the matching taskId
+    const taskToEdit = data?.tasks.find((task: any) => task._id === taskId);
+    if (taskToEdit) {
+   
+      // const workerForTask = taskToEdit.assigned_to_workers.find((worker: any) => worker.workerId._id === loggedInUserId);
+      if (workerObject.acknowledgedByWorker) {
+        // Check if the worker has acknowledged the task
+        // If acknowledged, set the note and status
+        setNote(workerObject.noteAddedByWorker || ""); // Set to worker's note or empty string
+        setStatus(workerObject.status || "Backlog"); // Set to worker's status or default "Backlog"
+      } else {
+        // If the task hasn't been acknowledged by the worker, set default values
+        setNote(""); // No note if not acknowledged
+        setStatus("Backlog"); // Default status if not acknowledged
+      }
+    }
+
+  };
+
   // Handle Acknowledge Task action
   const handleAcknowledgeTask = async () => {
     // Call your mutation or API to update task with the note and status
@@ -73,7 +94,7 @@ const WorkerAssignedTask: React.FC = () => {
     }
 
     const payload = { taskID: selectedTaskId, note, status };
-
+    
     try {
       acknowledgeTaskMutation.mutate(payload);
       setIsModalVisible(false);
@@ -109,6 +130,7 @@ const WorkerAssignedTask: React.FC = () => {
     }
 
     const isTaskAcknowledgedByWorker = userObject.acknowledgedByWorker;
+    
 
     return (
       <View
@@ -117,22 +139,47 @@ const WorkerAssignedTask: React.FC = () => {
         ]}
       >
         <Text style={styles.cardTitle}>{item.title}</Text>
+        <TouchableOpacity onPress={(id) => handleEdit(item._id, userObject)}>
+          {isTaskAcknowledgedByWorker ? (
+            <Ionicons name="pencil" size={28} color="black" />
+          ) : null}
+        </TouchableOpacity>
+
         <Text style={styles.cardDescription}>{item.description}</Text>
         <Text style={styles.cardDetails}>
-          <Text style={styles.boldText}>Assignor Name:</Text> {item.assignorName}
+          <Text style={styles.boldText}>Assignor Name:</Text>{" "}
+          {item.assignorName}
         </Text>
         <Text style={styles.cardDetails}>
-          <Text style={styles.boldText}>Assignor Email:</Text> {item.assignorEmail}
+          <Text style={styles.boldText}>Assignor Email:</Text>{" "}
+          {item.assignorEmail}
         </Text>
         <Text style={styles.cardDetails}>
           <Text style={styles.boldText}>Priority:</Text> {item.priority}
         </Text>
         <Text style={styles.cardDetails}>
-          <Text style={styles.boldText}>Archived:</Text> {item.isArchived ? "Yes" : "No"}
+          <Text style={styles.boldText}>Archived:</Text>{" "}
+          {item.isArchived ? "Yes" : "No"}
         </Text>
 
         {isTaskAcknowledgedByWorker ? (
-          <Text style={styles.acknowledgeText}>Task has been already acknowledged by you</Text>
+          <View style={styles.acknowledgeContainer}>
+          <Text style={styles.acknowledgeText}>
+            Task has been already acknowledged by you
+          </Text>
+          
+          <View style={styles.infoContainer}>
+            <Text style={styles.labelText}>Added Note:</Text>
+            <Text style={styles.valueText}>{userObject.noteAddedByWorker}</Text>
+          </View>
+          
+          <View style={styles.infoContainer}>
+            <Text style={styles.labelText}>Status:</Text>
+            <Text style={styles.valueText}>{userObject.status}</Text>
+          </View>
+
+          <Text>To update the Note and Status of the task click on the pencil Icon above</Text>
+        </View>
         ) : (
           <TouchableOpacity
             style={[styles.button, styles.viewDetailsButton]}
@@ -149,7 +196,9 @@ const WorkerAssignedTask: React.FC = () => {
   if (isLoading) return <Text>Loading tasks...</Text>;
   if (isError) {
     console.error("Error fetching tasks:", error);
-    return <Text>Error fetching tasks: {error?.message || "Unknown error"}</Text>;
+    return (
+      <Text>Error fetching tasks: {error?.message || "Unknown error"}</Text>
+    );
   }
 
   return (
@@ -218,8 +267,6 @@ const WorkerAssignedTask: React.FC = () => {
     </View>
   );
 };
-
-
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F5F7FA", padding: 20 },
@@ -315,7 +362,7 @@ const styles = StyleSheet.create({
     padding: 15,
     marginBottom: 10,
     borderRadius: 8,
-    backgroundColor: "#e0f7e0", // Light green background for acknowledged worker
+    backgroundColor: "#d4f7d0", // Light green background for acknowledged worker
     borderWidth: 2,
     borderColor: "green", // Green border when acknowledgedByWorker is true
     shadowColor: "#000",
@@ -324,12 +371,41 @@ const styles = StyleSheet.create({
     shadowRadius: 3,
     elevation: 4, // For Android shadow
   },
-  acknowledgeText:{
-    fontWeight:'bold',
-    marginTop:10,
-    
-
-  }
+ 
+  acknowledgeContainer: {
+    padding: 20,
+    backgroundColor: '#f1f1f1',
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    elevation: 3,
+    marginTop:20
+  },
+  acknowledgeText: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#333',
+    marginBottom: 15,
+    textAlign: 'center',
+  },
+  infoContainer: {
+    flexDirection: 'row',
+    marginBottom: 12,
+    alignItems: 'center',
+  },
+  labelText: {
+    fontSize: 16,
+    fontWeight: '600',
+    color: '#555',
+    width: 100, // to align the label and value text
+  },
+  valueText: {
+    fontSize: 16,
+    color: '#333',
+    flex: 1, // allow the value to take up the remaining space
+  },
 });
 
 export default WorkerAssignedTask;

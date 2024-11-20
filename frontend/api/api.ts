@@ -39,7 +39,7 @@ export interface AllTasks {
   status: "Done" | "In Progress" | "Backlog" | "Archived";
 }
 
-export const API_BASE_URL = "http://192.168.1.3:3000/api/v1";
+export const API_BASE_URL = "http://192.168.1.6:3000/api/v1";
 
 export const USER_API_ENDPOINTS = {
   login: "/user/signIn", // Login user endpoint
