@@ -75,3 +75,12 @@ npm start
 
 This will launch the Expo development server. You can run the app on your emulator or a physical device using the Expo Go app. Follow the instructions in the terminal to scan the QR code with Expo Go on your device.
 
+Note: Make Sure the IP Address of your Laptop and that of EXPO is same and you are running the application on the same network
+If the IP Address is not same follow these steps
+1. Open CMD Prompt run the command ipconfig and get the IP Address of your laptop
+2. Open the windows powershell as an Administrator
+3. Run the following command  setx /M REACT_NATIVE_PACKAGER_HOSTNAME 192.168.1.6(This should be Ip Address of your Laptop)
+4. Close and Restart the VS CODE
+5. Run the application again using the "npm start" command
+
+
